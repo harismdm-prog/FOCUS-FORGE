@@ -151,30 +151,9 @@ export const TimerProvider: React.FC<{ children: React.ReactNode; user: any; onS
 
   const resetTimer = useCallback(() => {
     setIsActive(false);
-    const focusDur = customDuration || user?.settings?.focusDuration || 25;
-    const time = mode === 'focus' 
-      ? focusDur * 60 
-      : (cycle % 4 === 0 ? 15 : (user?.settings?.breakDuration || 5)) * 60;
+    const time = mode === 'focus' ? customDuration * 60 : (user?.settings?.breakDuration || 5) * 60;
     setTimeLeft(time);
-  }, [mode, customDuration, user?.settings, cycle]);
-
-  const changeMode = (newMode: 'focus' | 'break') => {
-    setIsActive(false);
-    setMode(newMode);
-    const focusDur = customDuration || user?.settings?.focusDuration || 25;
-    const time = newMode === 'focus' 
-      ? focusDur * 60 
-      : (cycle % 4 === 0 ? 15 : (user?.settings?.breakDuration || 5)) * 60;
-    setTimeLeft(time);
-  };
-
-  const changeDuration = (duration: number) => {
-    setCustomDuration(duration);
-    if (mode === 'focus') {
-      setIsActive(false);
-      setTimeLeft(duration * 60);
-    }
-  };
+  }, [mode, customDuration, user?.settings?.breakDuration]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -190,8 +169,8 @@ export const TimerProvider: React.FC<{ children: React.ReactNode; user: any; onS
       progress,
       toggleTimer,
       resetTimer,
-      setMode: changeMode,
-      setCustomDuration: changeDuration,
+      setMode,
+      setCustomDuration,
       customDuration,
       distractions,
       cycle

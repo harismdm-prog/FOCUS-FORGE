@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "App user profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "xp": { "type": "number" },
+        "level": { "type": "number" },
+        "streak": { "type": "number" },
+        "lastSessionDate": { "type": "string", "description": "YYYY-MM-DD" },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "autoStartBreaks": { "type": "boolean" },
+            "autoStartFocus": { "type": "boolean" },
+            "soundNotifications": { "type": "boolean" },
+            "browserNotifications": { "type": "boolean" },
+            "publicProfile": { "type": "boolean" },
+            "shareFocusTrends": { "type": "boolean" },
+            "focusDuration": { "type": "number" },
+            "breakDuration": { "type": "number" }
+          }
+        }
+      },
+      "required": ["id", "email", "name"]
+    },
+    "Session": {
+      "title": "Session",
+      "description": "Productivity focus session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "duration": { "type": "number" },
+        "completed": { "type": "boolean" },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "duration", "completed", "date"]
+    },
+    "BlockedSite": {
+      "title": "BlockedSite",
+      "description": "User blocked website",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "url": { "type": "string" }
+      },
+      "required": ["id", "userId", "url"]
+    },
+    "BlockedApp": {
+      "title": "BlockedApp",
+      "description": "User blocked desktop app",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["id", "userId", "name"]
+    },
+    "BlockedMobileApp": {
+      "title": "BlockedMobileApp",
+      "description": "User blocked mobile app",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["id", "userId", "name"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Main user documents"
+    },
+    "/sessions/{sessionId}": {
+      "schema": "Session",
+      "description": "All focus sessions"
+    },
+    "/blockedSites/{siteId}": {
+      "schema": "BlockedSite",
+      "description": "Blocked website list"
+    },
+    "/blockedApps/{appId}": {
+      "schema": "BlockedApp",
+      "description": "Blocked desktop apps"
+    },
+    "/blockedMobileApps/{appId}": {
+      "schema": "BlockedMobileApp",
+      "description": "Blocked mobile apps"
+    }
+  }
+}

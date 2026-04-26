@@ -13,7 +13,9 @@ import Rewards from './components/Rewards';
 import Productivity from './components/Productivity';
 import Settings from './components/Settings';
 import LandingPage from './components/LandingPage';
-import { fetchUser, fetchStats } from './lib/api';
+import { fetchUser, fetchStats, createOrUpdateUser } from './lib/api';
+import { auth, logout as firebaseLogout } from './lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { TimerProvider } from './contexts/TimerContext';
 
 export default function App() {
@@ -22,43 +24,55 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Mock authentication for demo
-  const login = async (email: string = "demo@focusforge.app") => {
-    setLoading(true);
-    try {
-      const userData = await fetchUser(email);
-      setUser(userData);
-      const statsData = await fetchStats(userData.id);
-      setSessions(statsData);
-      setIsAuthenticated(true);
-    } catch (err) {
-      console.error(err);
-    } finally {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
+      if (firebaseUser) {
+        try {
+          const userData = await createOrUpdateUser(firebaseUser.uid, firebaseUser.email!, firebaseUser.displayName!);
+          setUser(userData);
+          const statsData = await fetchStats(firebaseUser.uid);
+          setSessions(statsData || []);
+          setIsAuthenticated(true);
+        } catch (err) {
+          console.error("Auth process error:", err);
+          setIsAuthenticated(false);
+          setUser(null);
+        }
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+        setSessions([]);
+      }
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleSessionComplete = (result: any) => {
-    setUser(result.user);
-    setSessions([...sessions, result.session]);
+    if (result.user) setUser(result.user);
+    if (result.session) setSessions(prev => [...prev, result.session]);
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-    setSessions([]);
+  const logout = async () => {
+    try {
+      await firebaseLogout();
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
   };
-
-  if (!isAuthenticated) {
-    return <LandingPage onStart={() => login()} />;
-  }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a051a] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-brand-500/20 border-t-brand-500 rounded-full animate-spin" />
+        <div className="w-12 h-12 border-4 border-accent-purple/20 border-t-accent-purple rounded-full animate-spin" />
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return <LandingPage onStart={() => {}} />;
   }
 
   return (

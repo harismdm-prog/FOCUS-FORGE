@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 import { Zap, Shield, Trophy, ArrowRight, Timer, BarChart3, Sparkles, X, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { signInWithGoogle } from '../lib/firebase';
 
 export default function LandingPage({ onStart }: { onStart: () => void }) {
   const [showDemo, setShowDemo] = useState(false);
+
+  const handleLogin = async () => {
+    try {
+      await signInWithGoogle();
+      onStart();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-bg-dark text-text-main overflow-hidden">
@@ -20,10 +30,10 @@ export default function LandingPage({ onStart }: { onStart: () => void }) {
           <span className="text-2xl font-bold tracking-tight">FocusForge</span>
         </div>
         <button 
-          onClick={onStart}
+          onClick={handleLogin}
           className="btn btn-ghost !px-8 !py-2.5 !text-sm"
         >
-          Sign In
+          Sign In with Google
         </button>
       </nav>
 
@@ -47,10 +57,10 @@ export default function LandingPage({ onStart }: { onStart: () => void }) {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <button 
-              onClick={onStart}
+              onClick={handleLogin}
               className="btn btn-primary !px-12 !py-6 !text-lg shadow-2xl shadow-accent-purple/20 group"
             >
-              Get Started for Free
+              Sign In with Google
               <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
             </button>
             <button 
