@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-bg-dark: #020617;
+  --color-accent-purple: #a855f7;
+  --color-accent-blue: #3b82f6;
+  --color-text-main: #f8fafc;
+  --color-text-dim: #94a3b8;
+  
+  --color-brand-50: #f0f4ff;
+  --color-brand-100: #e0e9ff;
+  --color-brand-200: #c1d3ff;
+  --color-brand-300: #92b1ff;
+  --color-brand-400: #5c84ff;
+  --color-brand-500: #3354ff;
+  --color-brand-600: #1a2eff;
+  --color-brand-700: #0a18ff;
+  --color-brand-800: #0009e6;
+  --color-brand-900: #0007b3;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-dark text-text-main antialiased selection:bg-accent-purple/30;
+    background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+    background-attachment: fixed;
+  }
+}
+
+.glass {
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] shadow-2xl;
+}
+
+.glass-dark {
+  @apply bg-black/50 backdrop-blur-2xl border border-white/[0.08] shadow-2xl;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-blue to-accent-purple;
+}
+
+.btn {
+  @apply px-10 py-4 rounded-full font-semibold uppercase tracking-wider text-[0.8rem] cursor-pointer transition-all duration-200 flex items-center justify-center gap-2;
+}
+
+.btn-primary {
+  @apply bg-text-main text-bg-dark hover:opacity-90 active:scale-95;
+}
+
+.btn-ghost {
+  @apply bg-white/[0.05] text-text-main border border-white/[0.08] hover:bg-white/[0.1] active:scale-95;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+}

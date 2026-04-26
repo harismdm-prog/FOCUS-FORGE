@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "id": "1776223353479",
+      "email": "demo@focusforge.app",
+      "name": "Demo User",
+      "xp": 0,
+      "level": 1,
+      "streak": 0,
+      "lastSessionDate": null,
+      "settings": {
+        "autoStartBreaks": false,
+        "autoStartFocus": false,
+        "soundNotifications": true,
+        "browserNotifications": true,
+        "publicProfile": false,
+        "shareFocusTrends": true,
+        "focusDuration": 25,
+        "breakDuration": 5
+      }
+    }
+  ],
+  "sessions": [],
+  "blockedSites": [],
+  "blockedApps": [],
+  "blockedMobileApps": []
+}
