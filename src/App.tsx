@@ -52,7 +52,7 @@ export default function App() {
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, []);
 
   const handleSessionComplete = (result: any) => {
     if (result.user) setUser(result.user);
