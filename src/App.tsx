@@ -23,17 +23,20 @@ import { TimerProvider } from './contexts/TimerContext';
 export default function App() {
   const [user, setUser] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isProcessingAuth, setIsProcessingAuth] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Only set loading if we don't already have user data (initial load or new login)
-        if (!user) setLoading(true);
-        
+        setIsProcessingAuth(true);
         try {
-          const userData = await createOrUpdateUser(firebaseUser.uid, firebaseUser.email!, firebaseUser.displayName || firebaseUser.email!.split('@')[0]);
+          const userData = await createOrUpdateUser(
+            firebaseUser.uid, 
+            firebaseUser.email!, 
+            firebaseUser.displayName || firebaseUser.email!.split('@')[0]
+          );
           setUser(userData);
           const statsData = await fetchStats(firebaseUser.uid);
           setSessions(statsData || []);
@@ -42,13 +45,16 @@ export default function App() {
           console.error("Auth process error:", err);
           setIsAuthenticated(false);
           setUser(null);
+        } finally {
+          setIsProcessingAuth(false);
         }
       } else {
         setIsAuthenticated(false);
         setUser(null);
         setSessions([]);
+        setIsProcessingAuth(false);
       }
-      setLoading(false);
+      setIsInitializing(false);
     });
 
     return () => unsubscribe();
@@ -67,7 +73,7 @@ export default function App() {
     }
   };
 
-  if (loading) {
+  if (isInitializing || (isProcessingAuth && !isAuthenticated)) {
     return (
       <div className="min-h-screen bg-bg-dark flex flex-col items-center justify-center gap-6">
         <Zap className="text-accent-purple fill-accent-purple animate-pulse" size={48} />
@@ -80,7 +86,9 @@ export default function App() {
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
-          <p className="text-text-dim text-xs font-bold uppercase tracking-[0.2em]">Forging Environment...</p>
+          <p className="text-text-dim text-xs font-bold uppercase tracking-[0.2em]">
+            {isProcessingAuth ? "Forging Your Profile..." : "Initializing Forge..."}
+          </p>
         </div>
       </div>
     );
