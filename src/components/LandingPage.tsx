@@ -3,7 +3,7 @@ import { Zap, Shield, Trophy, ArrowRight, Timer, BarChart3, Sparkles, X, PlayCir
 import { motion, AnimatePresence } from 'motion/react';
 import { signInWithGoogle } from '../lib/firebase';
 
-export default function LandingPage({ onStart }: { onStart: () => void }) {
+export default function LandingPage() {
   const [showDemo, setShowDemo] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -12,9 +12,12 @@ export default function LandingPage({ onStart }: { onStart: () => void }) {
     setIsLoggingIn(true);
     try {
       await signInWithGoogle();
-      onStart();
-    } catch (err) {
-      console.error(err);
+      // App.tsx handles the state transition via onAuthStateChanged
+    } catch (err: any) {
+      // Don't show error if user just closed the popup
+      if (err.code !== 'auth/popup-closed-by-user') {
+        console.error("Login failed:", err);
+      }
       setIsLoggingIn(false);
     }
   };

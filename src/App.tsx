@@ -28,10 +28,12 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setLoading(true);
       if (firebaseUser) {
+        // Only set loading if we don't already have user data (initial load or new login)
+        if (!user) setLoading(true);
+        
         try {
-          const userData = await createOrUpdateUser(firebaseUser.uid, firebaseUser.email!, firebaseUser.displayName!);
+          const userData = await createOrUpdateUser(firebaseUser.uid, firebaseUser.email!, firebaseUser.displayName || firebaseUser.email!.split('@')[0]);
           setUser(userData);
           const statsData = await fetchStats(firebaseUser.uid);
           setSessions(statsData || []);
@@ -50,7 +52,7 @@ export default function App() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const handleSessionComplete = (result: any) => {
     if (result.user) setUser(result.user);
@@ -85,7 +87,7 @@ export default function App() {
   }
 
   if (!isAuthenticated) {
-    return <LandingPage onStart={() => {}} />;
+    return <LandingPage />;
   }
 
   return (
