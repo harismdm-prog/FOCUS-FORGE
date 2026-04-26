@@ -21,7 +21,7 @@ export default function LandingPage() {
       } else if (err.code === 'auth/cancelled-popup-request') {
         // Just reset
       } else if (err.code === 'auth/unauthorized-domain') {
-        setLoginError("Domain not authorized. Please check your Firebase settings.");
+        setLoginError("Unauthorized domain. Please add this URL to 'Authorized domains' in your Firebase Auth settings.");
       } else {
         console.error("Login failed:", err);
         setLoginError(err.message || "Something went wrong. Please try again.");
@@ -46,8 +46,8 @@ export default function LandingPage() {
         </div>
         <div className="flex items-center gap-4">
           {loginError && (
-            <span className="text-red-500 text-xs font-medium bg-red-500/10 px-3 py-1.5 rounded-full border border-red-500/20">
-              Domain Error?
+            <span className="text-red-500 text-[10px] sm:text-xs font-medium bg-red-500/10 px-3 py-1.5 rounded-full border border-red-500/20 max-w-[150px] sm:max-w-none truncate">
+              {loginError}
             </span>
           )}
           <button 
