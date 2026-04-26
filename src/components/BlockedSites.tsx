@@ -167,8 +167,20 @@ export default function BlockedSites({ user }: { user: any }) {
               activeTab === 'apps' ? "e.g. Discord, Slack" : 
               "e.g. Instagram, TikTok"
             }
-            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-text-main outline-none focus:border-accent-purple/50 transition-all"
+            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-28 text-text-main outline-none focus:border-accent-purple/50 transition-all"
           />
+          <button
+            type="submit"
+            disabled={!newInput.trim() || isAdding}
+            className="absolute right-2 top-2 bottom-2 px-6 rounded-xl bg-accent-purple text-white font-bold text-xs uppercase tracking-widest hover:bg-accent-purple/80 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {isAdding ? (
+              <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            ) : (
+              <Plus size={16} />
+            )}
+            Add
+          </button>
         </div>
       </form>
 

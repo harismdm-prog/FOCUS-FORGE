@@ -139,7 +139,7 @@ export default function TimerComponent({ user }: TimerProps) {
         {/* Mode Switcher */}
         <div className="flex p-1 bg-white/5 rounded-2xl border border-white/10 mb-12">
           <button
-            onClick={() => { setMode('focus'); resetTimer(); }}
+            onClick={() => setMode('focus')}
             className={cn(
               "flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-medium",
               mode === 'focus' ? "bg-accent-purple text-white shadow-lg shadow-accent-purple/20" : "text-text-dim hover:text-text-main"
@@ -149,7 +149,7 @@ export default function TimerComponent({ user }: TimerProps) {
             Focus
           </button>
           <button
-            onClick={() => { setMode('break'); resetTimer(); }}
+            onClick={() => setMode('break')}
             className={cn(
               "flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-medium",
               mode === 'break' ? "bg-accent-blue text-white shadow-lg shadow-accent-blue/20" : "text-text-dim hover:text-text-main"
@@ -212,7 +212,7 @@ export default function TimerComponent({ user }: TimerProps) {
         {[15, 25, 45, 60].map((dur) => (
           <button
             key={dur}
-            onClick={() => { setCustomDuration(dur); resetTimer(); }}
+            onClick={() => setCustomDuration(dur)}
             className={cn(
               "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 border",
               customDuration === dur 

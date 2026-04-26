@@ -46,6 +46,32 @@ export default function Productivity({ user, sessions }: ProductivityProps) {
 
   const COLORS = ['#a855f7', '#3b82f6', '#10b981', '#f59e0b'];
 
+  const handleExportCSV = () => {
+    if (sessions.length === 0) return;
+    
+    const headers = ['Date', 'Duration (seconds)', 'Status', 'XP Earned'];
+    const rows = sessions.map(s => [
+      new Date(s.date).toLocaleString(),
+      s.duration,
+      s.completed ? 'Completed' : 'Interrupted',
+      s.completed ? Math.floor(s.duration / 60) * 10 : 0
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `FocusForge_History_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-10 pb-20">
       <header>
@@ -193,7 +219,12 @@ export default function Productivity({ user, sessions }: ProductivityProps) {
             <History className="text-accent-purple" size={20} />
             Focus History
           </h3>
-          <button className="text-xs font-bold text-accent-purple hover:underline uppercase tracking-widest">Export CSV</button>
+          <button 
+            onClick={handleExportCSV}
+            className="text-xs font-bold text-accent-purple hover:underline uppercase tracking-widest"
+          >
+            Export CSV
+          </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
