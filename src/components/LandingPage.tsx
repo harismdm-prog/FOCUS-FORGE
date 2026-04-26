@@ -1,30 +1,33 @@
 import React, { useState } from 'react';
-import { Zap, Shield, Trophy, ArrowRight, Timer, BarChart3, Sparkles, X, PlayCircle } from 'lucide-react';
+import { Zap, Shield, Trophy, ArrowRight, Timer, BarChart3, Sparkles, X, PlayCircle, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { signInWithGoogle } from '../lib/firebase';
+import { signInWithGoogle, signInWithGithub } from '../lib/firebase';
 
 export default function LandingPage() {
   const [showDemo, setShowDemo] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState<string | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  const handleLogin = async () => {
+  const handleLogin = async (provider: 'google' | 'github') => {
     if (isLoggingIn) return;
-    setIsLoggingIn(true);
+    setIsLoggingIn(provider);
     setLoginError(null);
     try {
-      await signInWithGoogle();
+      if (provider === 'google') await signInWithGoogle();
+      else await signInWithGithub();
       // App.tsx handles the state transition via onAuthStateChanged
     } catch (err: any) {
-      if (err.code === 'auth/popup-blocked-by-user') {
-        setLoginError("Sign-in popup was blocked or closed. Please try again.");
+      if (err.code === 'auth/popup-blocked-by-user' || err.code === 'auth/popup-closed-by-user') {
+        setLoginError("Sign-in popup was closed. Please try again.");
       } else if (err.code === 'auth/cancelled-popup-request') {
-        // Just reset, don't show error for cancel
+        // Just reset
+      } else if (err.code === 'auth/account-exists-with-different-credential') {
+        setLoginError("An account already exists with the same email address but different sign-in credentials.");
       } else {
-        console.error("Login failed:", err);
-        setLoginError("Something went wrong during sign-in. Please try again.");
+        console.error(`${provider} login failed:`, err);
+        setLoginError("Something went wrong. Please try again.");
       }
-      setIsLoggingIn(false);
+      setIsLoggingIn(null);
     }
   };
 
@@ -49,11 +52,11 @@ export default function LandingPage() {
             </span>
           )}
           <button 
-            onClick={handleLogin}
-            disabled={isLoggingIn}
-            className="btn btn-ghost !px-8 !py-2.5 !text-sm disabled:opacity-50"
+            onClick={() => handleLogin('google')}
+            disabled={!!isLoggingIn}
+            className="btn btn-ghost !px-6 !py-2.5 !text-sm disabled:opacity-50"
           >
-            {isLoggingIn ? 'Connecting...' : 'Sign In with Google'}
+            {isLoggingIn === 'google' ? 'Connecting...' : 'Sign In'}
           </button>
         </div>
       </nav>
@@ -77,13 +80,13 @@ export default function LandingPage() {
             Stop procrastinating and start achieving. FocusForge combines a premium Pomodoro timer with distraction blocking and RPG-style gamification to help you stay in the zone.
           </p>
             <div className="flex flex-col items-center gap-6">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button 
-                  onClick={handleLogin}
-                  disabled={isLoggingIn}
-                  className="btn btn-primary !px-12 !py-6 !text-lg shadow-2xl shadow-accent-purple/20 group disabled:opacity-50"
+                  onClick={() => handleLogin('google')}
+                  disabled={!!isLoggingIn}
+                  className="btn btn-primary !px-10 !py-6 !text-lg shadow-2xl shadow-accent-purple/20 group disabled:opacity-50"
                 >
-                  {isLoggingIn ? (
+                  {isLoggingIn === 'google' ? (
                     <div className="flex items-center gap-3">
                       <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                       Connecting...
@@ -96,12 +99,30 @@ export default function LandingPage() {
                   )}
                 </button>
                 <button 
-                  onClick={() => setShowDemo(true)}
-                  className="btn btn-ghost !px-12 !py-6 !text-lg"
+                  onClick={() => handleLogin('github')}
+                  disabled={!!isLoggingIn}
+                  className="btn bg-white/5 hover:bg-white/10 text-white !px-10 !py-6 !text-lg border border-white/10 flex items-center justify-center gap-3 disabled:opacity-50"
                 >
-                  Watch Demo
+                  {isLoggingIn === 'github' ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      Connecting...
+                    </div>
+                  ) : (
+                    <>
+                      <Github size={24} />
+                      Sign In with GitHub
+                    </>
+                  )}
                 </button>
               </div>
+              <button 
+                onClick={() => setShowDemo(true)}
+                className="text-text-dim hover:text-text-main text-sm font-bold uppercase tracking-widest flex items-center gap-2 group"
+              >
+                <PlayCircle className="group-hover:scale-110 transition-transform" size={20} />
+                Watch Demo
+              </button>
               {loginError && (
                 <motion.p 
                   initial={{ opacity: 0, y: -10 }}

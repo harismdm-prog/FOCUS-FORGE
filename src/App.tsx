@@ -32,10 +32,13 @@ export default function App() {
       if (firebaseUser) {
         setIsProcessingAuth(true);
         try {
+          const email = firebaseUser.email || `${firebaseUser.uid}@noemail.focusforge.app`;
+          const name = firebaseUser.displayName || email.split('@')[0] || 'Forge User';
+          
           const userData = await createOrUpdateUser(
             firebaseUser.uid, 
-            firebaseUser.email!, 
-            firebaseUser.displayName || firebaseUser.email!.split('@')[0]
+            email, 
+            name
           );
           setUser(userData);
           const statsData = await fetchStats(firebaseUser.uid);
