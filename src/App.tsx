@@ -12,6 +12,8 @@ import BlockedSites from './components/BlockedSites';
 import Rewards from './components/Rewards';
 import Productivity from './components/Productivity';
 import Settings from './components/Settings';
+import { Zap } from 'lucide-react';
+import { motion } from 'motion/react';
 import LandingPage from './components/LandingPage';
 import { fetchUser, fetchStats, createOrUpdateUser } from './lib/api';
 import { auth, logout as firebaseLogout } from './lib/firebase';
@@ -65,8 +67,19 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a051a] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-accent-purple/20 border-t-accent-purple rounded-full animate-spin" />
+      <div className="min-h-screen bg-bg-dark flex flex-col items-center justify-center gap-6">
+        <Zap className="text-accent-purple fill-accent-purple animate-pulse" size={48} />
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-accent-purple"
+              initial={{ width: 0 }}
+              animate={{ width: "100%" }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+          <p className="text-text-dim text-xs font-bold uppercase tracking-[0.2em]">Forging Environment...</p>
+        </div>
       </div>
     );
   }

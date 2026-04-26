@@ -5,13 +5,17 @@ import { signInWithGoogle } from '../lib/firebase';
 
 export default function LandingPage({ onStart }: { onStart: () => void }) {
   const [showDemo, setShowDemo] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handleLogin = async () => {
+    if (isLoggingIn) return;
+    setIsLoggingIn(true);
     try {
       await signInWithGoogle();
       onStart();
     } catch (err) {
       console.error(err);
+      setIsLoggingIn(false);
     }
   };
 
@@ -31,9 +35,10 @@ export default function LandingPage({ onStart }: { onStart: () => void }) {
         </div>
         <button 
           onClick={handleLogin}
-          className="btn btn-ghost !px-8 !py-2.5 !text-sm"
+          disabled={isLoggingIn}
+          className="btn btn-ghost !px-8 !py-2.5 !text-sm disabled:opacity-50"
         >
-          Sign In with Google
+          {isLoggingIn ? 'Connecting...' : 'Sign In with Google'}
         </button>
       </nav>
 
@@ -58,10 +63,20 @@ export default function LandingPage({ onStart }: { onStart: () => void }) {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <button 
               onClick={handleLogin}
-              className="btn btn-primary !px-12 !py-6 !text-lg shadow-2xl shadow-accent-purple/20 group"
+              disabled={isLoggingIn}
+              className="btn btn-primary !px-12 !py-6 !text-lg shadow-2xl shadow-accent-purple/20 group disabled:opacity-50"
             >
-              Sign In with Google
-              <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+              {isLoggingIn ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  Connecting...
+                </div>
+              ) : (
+                <>
+                  Sign In with Google
+                  <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                </>
+              )}
             </button>
             <button 
               onClick={() => setShowDemo(true)}
