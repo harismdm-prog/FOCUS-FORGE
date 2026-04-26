@@ -36,7 +36,9 @@ service cloud.firestore {
         && incoming().email is string
         && incoming().name is string
         && incoming().xp == 0
-        && incoming().level == 1;
+        && incoming().level == 1
+        && (incoming().lastSessionDate == null || incoming().lastSessionDate is string)
+        && incoming().settings is map;
       
       allow update: if isOwner(userId) && (
         // Action: Update Settings

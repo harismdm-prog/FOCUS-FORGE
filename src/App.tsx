@@ -35,11 +35,13 @@ export default function App() {
           const email = firebaseUser.email || `${firebaseUser.uid}@noemail.focusforge.app`;
           const name = firebaseUser.displayName || email.split('@')[0] || 'Forge User';
           
+          console.log("Attempting to sync user profile:", firebaseUser.uid);
           const userData = await createOrUpdateUser(
             firebaseUser.uid, 
             email, 
             name
           );
+          console.log("User profile synced successfully");
           setUser(userData);
           const statsData = await fetchStats(firebaseUser.uid);
           setSessions(statsData || []);

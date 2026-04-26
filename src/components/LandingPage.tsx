@@ -22,10 +22,12 @@ export default function LandingPage() {
       } else if (err.code === 'auth/cancelled-popup-request') {
         // Just reset
       } else if (err.code === 'auth/account-exists-with-different-credential') {
-        setLoginError("An account already exists with the same email address but different sign-in credentials.");
+        setLoginError("Accont exists with different credentials. Try a different sign-in method.");
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setLoginError(`${provider} sign-in is not enabled. Please enable it in Firebase Console.`);
       } else {
         console.error(`${provider} login failed:`, err);
-        setLoginError("Something went wrong. Please try again.");
+        setLoginError(err.message || "Something went wrong. Please try again.");
       }
       setIsLoggingIn(null);
     }
